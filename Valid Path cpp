@@ -1,0 +1,77 @@
+bool check(int x , int y , int x1 , int y1 , int R)
+{
+    long long int val = (x-x1)*(x-x1) + (y-y1)*(y-y1);
+    long long int r = R * R;
+    return (val > r);
+}
+int cellchk(int x, int y, int n, int m)
+{
+    if (x<n && y<m && x>-1 && y>-1) return 1;
+    return 0;
+}
+int dfs(int x, int y, vector<vector<int>> &chk)
+{
+    int n = chk.size();
+    int m = chk[0].size();
+    if (x==n-1 && y==m-1) return 1;
+    // check all 8 adjacent cells
+    if (cellchk(x-1,y,n,m) && chk[x-1][y]==1) {
+        chk[x-1][y] = 2;
+        if (dfs(x-1,y,chk)) return 1;
+    }
+    if (cellchk(x+1,y,n,m) && chk[x+1][y]==1) {
+        chk[x+1][y] = 2;
+        if (dfs(x+1,y,chk)) return 1;
+    }
+    
+    if (cellchk(x,y-1,n,m) && chk[x][y-1]==1) {
+        chk[x][y-1] = 2;
+        if (dfs(x,y-1,chk)) return 1;
+    }
+    if (cellchk(x,y+1,n,m) && chk[x][y+1]==1) {
+        chk[x][y+1] = 2;
+        if (dfs(x,y+1,chk)) return 1;
+    }
+    
+    if (cellchk(x-1,y-1,n,m) && chk[x-1][y-1]==1) {
+        chk[x-1][y-1] = 2;
+        if (dfs(x-1,y-1,chk)) return 1;
+    }
+    if (cellchk(x+1,y-1,n,m) && chk[x+1][y-1]==1) {
+        chk[x+1][y-1] = 2;
+        if (dfs(x+1,y-1,chk)) return 1;
+    }
+
+    if (cellchk(x-1,y+1,n,m) && chk[x-1][y+1]==1) {
+        chk[x-1][y+1] = 2;
+        if (dfs(x-1,y+1,chk)) return 1;
+    }
+    if (cellchk(x+1,y+1,n,m) && chk[x+1][y+1]==1) {
+        chk[x+1][y+1] = 2;
+        if (dfs(x+1,y+1,chk)) return 1;
+    }
+    return 0;
+    
+}
+string Solution::solve(int n, int m, int N, int R, vector<int> &C1, vector<int> &C2) {
+    vector<vector<int>> chk(n+1 , vector<int>(m+1 , -1));
+    for (int i=0 ; i<n+1 ; i++)
+    {
+        for (int j=0 ; j<m+1 ; j++)
+        {
+            bool booli = true;
+            for (int x=0 ; x<N ; x++)
+            {
+                if (!check(i,j,C1[x],C2[x],R)) {
+                    booli = false;
+                    break;
+                }
+            }
+            if (booli) chk[i][j] = 1;
+        }
+    }
+    
+    // dfs from 0,0 to n,m
+    if (chk[0][0]==1 && dfs(0,0,chk)) return "YES";
+    return "NO";
+}
